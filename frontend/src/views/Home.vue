@@ -1,9 +1,14 @@
 <template>
   <section class="home">
     <modal v-if="showModal" label="Quem é você ?" @close="closeModal()">
-      <button class="btn w-100" :style="{ marginBottom: '1rem' }">
+      <router-link
+        to="/register"
+        tag="button"
+        class="btn w-100"
+        :style="{ marginBottom: '1rem' }"
+      >
         Sou desenvolvedor
-      </button>
+      </router-link>
       <button class="btn btn-green w-100">
         Sou cliente / contratante
       </button>
@@ -55,7 +60,6 @@ export default {
 
 <style scoped>
 .home {
-  background: var(--color-grey-light);
   height: 100vh;
   width: 100%;
 }

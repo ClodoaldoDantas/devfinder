@@ -20,6 +20,8 @@ html {
   --color-grey: #555;
   --color-grey-medium: #666;
   --color-grey-light: #fafafa;
+  --color-border: #eee;
+  --color-input: #f0f0f5;
   --color-blue: #3498db;
   --color-green: #2ecc71;
 }
@@ -28,6 +30,12 @@ body {
   font-size: 1.6rem;
   font-family: "Open Sans", sans-serif;
   color: var(--color-grey);
+}
+
+#app {
+  height: 100%;
+  width: 100%;
+  background: var(--color-grey-light);
 }
 
 h1,
@@ -63,6 +71,12 @@ h3 {
 
 .btn-green {
   background-color: var(--color-green);
+}
+
+.two-columns {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 1.5rem;
 }
 
 .w-100 {
