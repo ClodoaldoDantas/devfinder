@@ -21,6 +21,7 @@ html {
   --color-grey-medium: #666;
   --color-grey-light: #fafafa;
   --color-blue: #3498db;
+  --color-green: #2ecc71;
 }
 
 body {
@@ -58,5 +59,13 @@ h3 {
 
 .btn:hover {
   opacity: 0.8;
+}
+
+.btn-green {
+  background-color: var(--color-green);
+}
+
+.w-100 {
+  width: 100%;
 }
 </style>

@@ -1,5 +1,13 @@
 <template>
   <section class="home">
+    <modal v-if="showModal" label="Quem é você ?" @close="closeModal()">
+      <button class="btn w-100" :style="{ marginBottom: '1rem' }">
+        Sou desenvolvedor
+      </button>
+      <button class="btn btn-green w-100">
+        Sou cliente / contratante
+      </button>
+    </modal>
     <div class="container">
       <div class="home-content">
         <h1>DevFinder</h1>
@@ -7,7 +15,7 @@
           precisa de um desenvolvedor perto de <br />
           você ? Encontre-o aqui.
         </p>
-        <button class="btn btn-home">
+        <button @click="openModal()" class="btn btn-home">
           <span>inicie agora mesmo</span>
           <log-in-icon size="24"></log-in-icon>
         </button>
@@ -21,11 +29,26 @@
 
 <script>
 import { LogInIcon } from "vue-feather-icons";
+import Modal from "@/components/Modal";
 
 export default {
   name: "Home",
   components: {
     LogInIcon,
+    Modal,
+  },
+  data() {
+    return {
+      showModal: false,
+    };
+  },
+  methods: {
+    openModal() {
+      this.showModal = true;
+    },
+    closeModal() {
+      this.showModal = false;
+    },
   },
 };
 </script>
