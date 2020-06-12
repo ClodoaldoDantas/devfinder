@@ -6,6 +6,23 @@
         <div class="card">
           <h2 class="register-title">Faça seu cadastro</h2>
           <form @submit.prevent="handleSubmit()" class="form">
+            <div class="form__group">
+              <div class="box" :class="{ border: !image }">
+                <input
+                  @change="handleFile"
+                  id="image"
+                  type="file"
+                  accept="image/*"
+                />
+                <label v-if="!image" for="image">
+                  <upload-icon size="24" class="icon-upload"></upload-icon>
+                  <p>Selecione uma imagem</p>
+                </label>
+
+                <img v-else :src="imagePreview" alt="Preview" />
+              </div>
+            </div>
+
             <!-- NAME -->
             <div class="form__group">
               <label for="name" class="form__label">Nome</label>
@@ -110,13 +127,16 @@
 
 <script>
 import { latLng } from "leaflet";
+import { UploadIcon } from "vue-feather-icons";
 import Navbar from "@/components/Navbar";
 import axios from "axios";
+import api from "@/services/api";
 
 export default {
   name: "Register",
   components: {
     Navbar,
+    UploadIcon,
   },
   data() {
     return {
@@ -124,6 +144,8 @@ export default {
       email: "",
       whatsapp: "",
       position: null,
+      image: null,
+      imagePreview: "",
       submitted: false,
       ufs: [],
       selectedUf: "0",
@@ -170,8 +192,11 @@ export default {
       const valid = fields.filter((field) => field === "" || field === "0");
       return valid.length === 0;
     },
+    handleFile(event) {
+      this.image = event.target.files[0];
+    },
     handleSubmit() {
-      const { name, email, whatsapp, selectedUf, selectedCity } = this;
+      const { name, email, whatsapp, selectedUf, selectedCity, image } = this;
       const { lat, lng } = this.position;
 
       const validatedFields = this.validateFields(
@@ -193,16 +218,25 @@ export default {
         data.append("longitude", String(lng));
         data.append("city", selectedCity);
         data.append("uf", selectedUf);
+        data.append("image", image);
 
-        for (var pair of data.entries()) {
-          console.log(pair[0] + ", " + pair[1]);
-        }
+        api.post("/developers", data).then(() => {
+          alert("Usuário cadastrado com sucesso");
+          this.$router.push("/");
+        });
       }
     },
   },
   watch: {
     selectedUf(value) {
       if (value !== "0") this.getCities(value);
+    },
+    image() {
+      const reader = new FileReader();
+      reader.readAsDataURL(this.image);
+      reader.onloadend = () => {
+        this.imagePreview = reader.result;
+      };
     },
   },
 };
@@ -274,5 +308,42 @@ select {
   margin-top: 0.5rem;
   font-size: 1.4rem;
   color: var(--color-red);
+}
+
+.box {
+  height: 300px;
+  border-radius: 1rem;
+  width: 100%;
+  background: rgba(52, 152, 219, 0.18);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.box.border {
+  border: 2px dashed rgba(52, 152, 219, 0.18);
+}
+
+.box input {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+.box label {
+  cursor: pointer;
+  text-align: center;
+}
+
+.box img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  border-radius: 1rem;
 }
 </style>

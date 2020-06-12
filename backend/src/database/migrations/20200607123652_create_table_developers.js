@@ -1,7 +1,7 @@
 exports.up = function (knex) {
   return knex.schema.createTable("developers", (table) => {
     table.increments("id").primary();
-    table.string("image").notNullable();
+    table.string("image");
     table.string("name").notNullable();
     table.string("email").notNullable();
     table.string("whatsapp").notNullable();
