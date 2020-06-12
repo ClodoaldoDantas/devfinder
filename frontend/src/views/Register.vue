@@ -16,6 +16,9 @@
                 class="form__input"
                 v-model="name"
               />
+              <span v-if="submitted && !name" class="error">
+                * Nome é obrigatório
+              </span>
             </div>
 
             <div class="two-columns">
@@ -29,6 +32,9 @@
                   class="form__input"
                   v-model="email"
                 />
+                <span v-if="submitted && !email" class="error">
+                  * E-mail é obrigatório
+                </span>
               </div>
 
               <!-- WHATSAPP -->
@@ -41,6 +47,9 @@
                   class="form__input"
                   v-model="whatsapp"
                 />
+                <span v-if="submitted && !whatsapp" class="error">
+                  * Whatsapp é obrigatório
+                </span>
               </div>
             </div>
 
@@ -63,16 +72,28 @@
               <!-- UF -->
               <div class="form__group">
                 <label for="uf" class="form__label">Uf</label>
-                <select id="uf">
-                  <option value="">Selecione a UF</option>
+                <select id="uf" v-model="selectedUf">
+                  <option value="0">Selecione a UF</option>
+                  <option v-for="uf in ufs" :key="uf" :value="uf">
+                    {{ uf }}
+                  </option>
                 </select>
+                <span v-if="submitted && selectedUf === '0'" class="error">
+                  * UF é obrigatório
+                </span>
               </div>
               <!-- CITY -->
               <div class="form__group">
                 <label for="city" class="form__label">Cidade</label>
-                <select id="city">
-                  <option value="">Selecione a UF</option>
+                <select id="city" v-model="selectedCity">
+                  <option value="0">Selecione a Cidade</option>
+                  <option v-for="city in cities" :key="city" :value="city">
+                    {{ city }}
+                  </option>
                 </select>
+                <span v-if="submitted && selectedCity === '0'" class="error">
+                  * Cidade é obrigatória
+                </span>
               </div>
             </div>
 
@@ -90,6 +111,7 @@
 <script>
 import { latLng } from "leaflet";
 import Navbar from "@/components/Navbar";
+import axios from "axios";
 
 export default {
   name: "Register",
@@ -101,8 +123,13 @@ export default {
       name: "",
       email: "",
       whatsapp: "",
-      center: null,
       position: null,
+      submitted: false,
+      ufs: [],
+      selectedUf: "0",
+      cities: [],
+      selectedCity: "0",
+      center: null,
       zoom: 15,
       url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       attribution:
@@ -110,27 +137,72 @@ export default {
     };
   },
   created() {
-    navigator.geolocation.getCurrentPosition((position) => {
-      const { latitude, longitude } = position.coords;
-      this.center = latLng(latitude, longitude);
-      this.position = latLng(latitude, longitude);
-    });
+    this.currentLocation();
+    this.getUfs();
   },
   methods: {
     updatePosition(latLng) {
       this.position = latLng;
     },
+    currentLocation() {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const { latitude, longitude } = position.coords;
+        this.center = latLng(latitude, longitude);
+        this.position = latLng(latitude, longitude);
+      });
+    },
+    getUfs() {
+      axios
+        .get("https://servicodados.ibge.gov.br/api/v1/localidades/estados")
+        .then((response) => {
+          const ufs = response.data.map((item) => item.sigla);
+          this.ufs = ufs;
+        });
+    },
+    getCities(uf) {
+      const url = `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios`;
+      axios.get(url).then((response) => {
+        const cities = response.data.map((city) => city.nome);
+        this.cities = cities;
+      });
+    },
+    validateFields(...fields) {
+      const valid = fields.filter((field) => field === "" || field === "0");
+      return valid.length === 0;
+    },
     handleSubmit() {
-      const { name, email, whatsapp } = this;
+      const { name, email, whatsapp, selectedUf, selectedCity } = this;
       const { lat, lng } = this.position;
-      console.log(name, email, whatsapp, lat, lng);
 
-      const data = new FormData();
-      data.append("name", name);
-      data.append("email", email);
-      data.append("whatsapp", whatsapp);
-      data.append("latitude", String(lat));
-      data.append("longitude", String(lng));
+      const validatedFields = this.validateFields(
+        name,
+        email,
+        whatsapp,
+        selectedUf,
+        selectedCity
+      );
+
+      this.submitted = true;
+
+      if (validatedFields) {
+        const data = new FormData();
+        data.append("name", name);
+        data.append("email", email);
+        data.append("whatsapp", whatsapp);
+        data.append("latitude", String(lat));
+        data.append("longitude", String(lng));
+        data.append("city", selectedCity);
+        data.append("uf", selectedUf);
+
+        for (var pair of data.entries()) {
+          console.log(pair[0] + ", " + pair[1]);
+        }
+      }
+    },
+  },
+  watch: {
+    selectedUf(value) {
+      if (value !== "0") this.getCities(value);
     },
   },
 };
@@ -195,5 +267,12 @@ select {
 
 .container-map {
   margin: 2rem 0;
+}
+
+.error {
+  display: inline-block;
+  margin-top: 0.5rem;
+  font-size: 1.4rem;
+  color: var(--color-red);
 }
 </style>

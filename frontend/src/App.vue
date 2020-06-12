@@ -24,6 +24,7 @@ html {
   --color-input: #f0f0f5;
   --color-blue: #3498db;
   --color-green: #2ecc71;
+  --color-red: #e74c3c;
 }
 
 body {
