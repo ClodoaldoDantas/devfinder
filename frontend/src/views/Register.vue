@@ -1,9 +1,12 @@
 <template>
   <section class="register">
     <div class="container">
+      <!-- NAVBAR -->
       <navbar />
+
+      <!-- FORM -->
       <section class="register-content">
-        <div class="card">
+        <Card class="card">
           <h2 class="register-title">Faça seu cadastro</h2>
           <form @submit.prevent="handleSubmit()" class="form">
             <div class="form__group">
@@ -33,9 +36,6 @@
                 class="form__input"
                 v-model="name"
               />
-              <span v-if="submitted && !name" class="error">
-                * Nome é obrigatório
-              </span>
             </div>
 
             <div class="two-columns">
@@ -49,9 +49,6 @@
                   class="form__input"
                   v-model="email"
                 />
-                <span v-if="submitted && !email" class="error">
-                  * E-mail é obrigatório
-                </span>
               </div>
 
               <!-- WHATSAPP -->
@@ -64,9 +61,6 @@
                   class="form__input"
                   v-model="whatsapp"
                 />
-                <span v-if="submitted && !whatsapp" class="error">
-                  * Whatsapp é obrigatório
-                </span>
               </div>
             </div>
 
@@ -95,9 +89,6 @@
                     {{ uf }}
                   </option>
                 </select>
-                <span v-if="submitted && selectedUf === '0'" class="error">
-                  * UF é obrigatório
-                </span>
               </div>
               <!-- CITY -->
               <div class="form__group">
@@ -108,19 +99,25 @@
                     {{ city }}
                   </option>
                 </select>
-                <span v-if="submitted && selectedCity === '0'" class="error">
-                  * Cidade é obrigatória
-                </span>
               </div>
             </div>
-
+            <div v-if="error" class="error-container">
+              <span class="error">* Preencha todos os campos</span>
+            </div>
             <!-- BUTTON -->
             <div class="form__group align-end">
               <button class="btn btn-blue">Cadastrar</button>
             </div>
           </form>
-        </div>
+        </Card>
       </section>
+
+      <!-- MODAL -->
+      <modal v-if="showModal" label="Cadastro concluído" :btnClose="false">
+        <router-link to="/" tag="button" class="btn w-100">
+          Voltar para a home
+        </router-link>
+      </modal>
     </div>
   </section>
 </template>
@@ -128,15 +125,22 @@
 <script>
 import { latLng } from "leaflet";
 import { UploadIcon } from "vue-feather-icons";
-import Navbar from "@/components/Navbar";
+
 import axios from "axios";
 import api from "@/services/api";
+import { url, attribution } from "@/helpers/map";
+
+import Navbar from "@/components/Navbar";
+import Card from "@/components/Card";
+import Modal from "@/components/Modal";
 
 export default {
   name: "Register",
   components: {
     Navbar,
     UploadIcon,
+    Card,
+    Modal,
   },
   data() {
     return {
@@ -146,16 +150,16 @@ export default {
       position: null,
       image: null,
       imagePreview: "",
-      submitted: false,
       ufs: [],
       selectedUf: "0",
       cities: [],
       selectedCity: "0",
       center: null,
       zoom: 15,
-      url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-      attribution:
-        '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+      error: false,
+      url,
+      attribution,
+      showModal: false,
     };
   },
   created() {
@@ -163,6 +167,10 @@ export default {
     this.getUfs();
   },
   methods: {
+    showError() {
+      this.error = true;
+      setTimeout(() => (this.error = false), 1000);
+    },
     updatePosition(latLng) {
       this.position = latLng;
     },
@@ -173,20 +181,19 @@ export default {
         this.position = latLng(latitude, longitude);
       });
     },
-    getUfs() {
-      axios
-        .get("https://servicodados.ibge.gov.br/api/v1/localidades/estados")
-        .then((response) => {
-          const ufs = response.data.map((item) => item.sigla);
-          this.ufs = ufs;
-        });
+    async getUfs() {
+      const response = await axios.get(
+        "https://servicodados.ibge.gov.br/api/v1/localidades/estados"
+      );
+      const ufs = response.data.map((item) => item.sigla);
+      this.ufs = ufs;
     },
-    getCities(uf) {
-      const url = `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios`;
-      axios.get(url).then((response) => {
-        const cities = response.data.map((city) => city.nome);
-        this.cities = cities;
-      });
+    async getCities(uf) {
+      const response = await axios.get(
+        `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${uf}/municipios`
+      );
+      const cities = response.data.map((city) => city.nome);
+      this.cities = cities;
     },
     validateFields(...fields) {
       const valid = fields.filter((field) => field === "" || field === "0");
@@ -207,8 +214,6 @@ export default {
         selectedCity
       );
 
-      this.submitted = true;
-
       if (validatedFields) {
         const data = new FormData();
         data.append("name", name);
@@ -221,9 +226,15 @@ export default {
         data.append("image", image);
 
         api.post("/developers", data).then(() => {
-          alert("Usuário cadastrado com sucesso");
-          this.$router.push("/");
+          window.scroll({
+            top: 0,
+            behavior: "smooth",
+          });
+
+          this.showModal = true;
         });
+      } else {
+        this.showError();
       }
     },
   },
@@ -250,16 +261,6 @@ export default {
 
 .register-content {
   padding: 2rem 0;
-}
-
-.card {
-  background-color: #fff;
-  border: 1px solid var(--color-border);
-  border-radius: 1rem;
-  max-width: 60rem;
-  width: 100%;
-  margin: 0 auto;
-  padding: 2rem;
 }
 
 .form {
@@ -304,10 +305,13 @@ select {
 }
 
 .error {
-  display: inline-block;
-  margin-top: 0.5rem;
-  font-size: 1.4rem;
+  display: block;
+  padding: 1.2rem 1.8rem;
+  margin-bottom: 2rem;
   color: var(--color-red);
+  background-color: var(--bg-red);
+  border: 1px solid var(--border-red);
+  border-radius: 1.5rem;
 }
 
 .box {

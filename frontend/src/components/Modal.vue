@@ -3,7 +3,7 @@
     <div class="modal">
       <h2 class="modal-title">{{ label }}</h2>
       <slot />
-      <button @click="handleSubmit()" class="modal-btn-close">
+      <button v-if="btnClose" @click="handleSubmit()" class="modal-btn-close">
         <x-icon size="20" class="modal-icon-close"></x-icon>
       </button>
     </div>
@@ -15,7 +15,16 @@ import { XIcon } from "vue-feather-icons";
 
 export default {
   name: "Modal",
-  props: ["label"],
+  props: {
+    label: {
+      type: String,
+      required: true,
+    },
+    btnClose: {
+      type: Boolean,
+      default: true,
+    },
+  },
   components: {
     XIcon,
   },
@@ -29,7 +38,7 @@ export default {
 
 <style scoped>
 .modal-container {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;

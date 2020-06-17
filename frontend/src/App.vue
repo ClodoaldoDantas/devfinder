@@ -24,7 +24,9 @@ html {
   --color-input: #f0f0f5;
   --color-blue: #3498db;
   --color-green: #2ecc71;
-  --color-red: #e74c3c;
+  --color-red: #721c24;
+  --bg-red: #f8d7da;
+  --border-red: #f5c6cb;
 }
 
 body {
