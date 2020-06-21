@@ -29,6 +29,10 @@ html {
   --border-red: #f5c6cb;
 }
 
+ul {
+  list-style: none;
+}
+
 body {
   font-size: 1.6rem;
   font-family: "Open Sans", sans-serif;
@@ -36,14 +40,15 @@ body {
 }
 
 #app {
-  height: 100%;
+  min-height: 100vh;
   width: 100%;
   background: var(--color-grey-light);
 }
 
 h1,
 h2,
-h3 {
+h3,
+strong {
   font-family: "Ubuntu", sans-serif;
   font-weight: bold;
 }
@@ -66,6 +71,11 @@ h3 {
   cursor: pointer;
   outline: 0;
   transition: opacity 200ms ease;
+}
+
+.btn-small {
+  padding: 0.8rem 1rem;
+  font-size: 1.2rem;
 }
 
 .btn:hover {

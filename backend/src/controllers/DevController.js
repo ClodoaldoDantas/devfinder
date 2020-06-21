@@ -16,6 +16,21 @@ class DevController {
       });
   }
 
+  static show(request, response) {
+    const { id } = request.params;
+    knex("developers")
+      .select("*")
+      .where("id", id)
+      .first()
+      .then((result) => {
+        const dev = {
+          ...result,
+          image: `http://localhost:3333/uploads/${result.image}`,
+        };
+        response.json(dev);
+      });
+  }
+
   static create(request, response) {
     knex("developers")
       .insert({

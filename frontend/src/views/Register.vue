@@ -2,12 +2,12 @@
   <section class="register">
     <div class="container">
       <!-- NAVBAR -->
-      <navbar />
+      <navbar label="Voltar para a home 🏠" route="/" />
 
       <!-- FORM -->
       <section class="register-content">
-        <Card class="card">
-          <h2 class="register-title">Faça seu cadastro</h2>
+        <card>
+          <h2 class="register-title">Faça seu cadastro ✍️</h2>
           <form @submit.prevent="handleSubmit()" class="form">
             <div class="form__group">
               <div class="box" :class="{ border: !image }">
@@ -69,7 +69,7 @@
               class="container-map"
               :style="{ height: center ? '30rem' : '0' }"
             >
-              <l-map v-if="center" :zoom="zoom" :center="center">
+              <l-map v-if="center && position" :zoom="zoom" :center="center">
                 <l-tile-layer :url="url" :attribution="attribution" />
                 <l-marker
                   :draggable="true"
@@ -109,7 +109,7 @@
               <button class="btn btn-blue">Cadastrar</button>
             </div>
           </form>
-        </Card>
+        </card>
       </section>
 
       <!-- MODAL -->
@@ -154,7 +154,7 @@ export default {
       selectedUf: "0",
       cities: [],
       selectedCity: "0",
-      center: null,
+      center: latLng(-3.8260461, -38.473319),
       zoom: 15,
       error: false,
       url,

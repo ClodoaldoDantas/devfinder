@@ -2,6 +2,8 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
 import Register from "../views/Register.vue";
+import List from "../views/List.vue";
+import Detail from "../views/Detail.vue";
 
 Vue.use(VueRouter);
 
@@ -15,6 +17,16 @@ const routes = [
     path: "/register",
     name: "register",
     component: Register,
+  },
+  {
+    path: "/list",
+    name: "list",
+    component: List,
+  },
+  {
+    path: "/detail/:id",
+    name: "detail",
+    component: Detail,
   },
 ];
 

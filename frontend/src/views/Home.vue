@@ -6,19 +6,18 @@
         tag="button"
         class="btn w-100"
         :style="{ marginBottom: '1rem' }"
+        >Sou desenvolvedor</router-link
       >
-        Sou desenvolvedor
-      </router-link>
-      <button class="btn btn-green w-100">
+      <router-link tag="button" to="/list" class="btn btn-green w-100">
         Sou cliente / contratante
-      </button>
+      </router-link>
     </modal>
     <div class="container">
       <div class="home-content">
         <h1>DevFinder</h1>
         <p>
-          precisa de um desenvolvedor perto de <br />
-          você ? Encontre-o aqui.
+          precisa de um desenvolvedor(a) perto de
+          <br />você ? Encontre-o aqui.
         </p>
         <button @click="openModal()" class="btn btn-home">
           <span>inicie agora mesmo</span>

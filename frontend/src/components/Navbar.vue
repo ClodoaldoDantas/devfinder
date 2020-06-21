@@ -1,9 +1,9 @@
 <template>
   <header class="header">
-    <router-link to="/" tag="button" class="header-btn">
+    <router-link :to="route" tag="button" class="header-btn">
       <arrow-left-icon size="20"></arrow-left-icon>
     </router-link>
-    <span class="header-label">Voltar para home</span>
+    <span class="header-label">{{ label }}</span>
   </header>
 </template>
 
@@ -12,6 +12,16 @@ import { ArrowLeftIcon } from "vue-feather-icons";
 
 export default {
   name: "Register",
+  props: {
+    label: {
+      type: String,
+      required: true,
+    },
+    route: {
+      type: String,
+      required: true,
+    },
+  },
   components: {
     ArrowLeftIcon,
   },
