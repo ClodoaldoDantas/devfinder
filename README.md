@@ -40,7 +40,7 @@ $ npm run dev
 # frontend
 $ cd frontend
 $ npm install
-$ npm run dev
+$ npm run serve
 ```
 
 ## :memo: Licença
