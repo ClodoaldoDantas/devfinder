@@ -6,7 +6,7 @@ Localize desenvolvedores perto de você.
 
 ![Tela de Detalhes](layout/tela-cadastro.png)
 
-![Tela de Detalhes](layout/tela-detalhes.png)
+![Tela de Detalhes](layout/tela-detalhe.png)
 
 ## :wrench: Configuração do banco de dados
 
