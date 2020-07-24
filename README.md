@@ -1,5 +1,9 @@
 ## :satellite: DevFinder
 
+[![author](https://img.shields.io/badge/author-clodoaldodantas-green?style=flat-square)](https://github.com/ClodoaldoDantas)
+[![GitHub language count](https://img.shields.io/github/languages/count/clodoaldodantas/devfinder?color=green&style=flat-square)](#)
+[![GitHub](https://img.shields.io/github/license/clodoaldodantas/devfinder?color=green&style=flat-square)](#)
+
 Localize desenvolvedores perto de você.
 
 ![Tela de Detalhes](layout/tela-listagem.png)
